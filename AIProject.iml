@@ -7,8 +7,32 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Jess" level="project" />
-    <orderEntry type="library" name="Jade" level="project" />
+    <orderEntry type="module-library">
+      <library name="Jess">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jess.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jsr94.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/lib/api" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Jade">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jade.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/lib/api1" />
+          <root url="file://$MODULE_DIR$/lib/jdoc" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Jade" level="application" />
     <orderEntry type="library" name="Jess" level="application" />
   </component>
