@@ -1,2 +1,4 @@
-public class ControllerAgent {
+import jade.core.Agent;
+
+public class ControllerAgent extends Agent {
 }
