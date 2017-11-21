@@ -6,9 +6,12 @@
               (slot encoding) (multislot reply-to) (slot reply-by))
 
 ;recebe proposta de estação, aceitar, recusae, ou recusar novas propostas as well?
+;ideia:ter um limite de ofertas, quando ultrapassar, recusar novas propostas
+;questão, e se user sair da area!?
 
-(defrule proposal-accept
- ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {;TODO: Regras})
+
+(defrule good-offer
+ ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content>0.7 ;70%desconto!})
  (MyAgent (name ?n))
  =>
  (assert (ACLMessage (communicative-act ACCEPT-PROPOSAL) (sender ?n) (receiver ?s) (content cooling) ))
@@ -16,10 +19,13 @@
 )
 
 (defrule proposal-refusal
- ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {;TODO: Regras})
+ ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content<0.4 ;apenas 40%})
  (MyAgent (name ?n))
  =>
+ ;se tentativas pelo agente <3
  (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content cooling) ))
+ ;senão
+ assert um para recusar mais ofertas
  (retract ?m)
 )
 

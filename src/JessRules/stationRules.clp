@@ -6,20 +6,23 @@
               (slot encoding) (multislot reply-to) (slot reply-by))
 
 
-;Quando recebe mensagem de user devolver bicicleta -> mandar mensagem para controlador
-
 
 
 ; Envio de propostas
 (defrule proposal
- ?m <- (ACLMessage (communicative-act INFORM) (sender ?s) (content ?c) (receiver ?r) {TODO: content ser de devovulção})
+ ?m <- (ACLMessage (communicative-act INFORM) (sender ?s) (content ?c) (receiver ?r) {TODO: })
  (MyAgent (name ?n))
  =>
+ ;ver questão do subscribe
+ ;calcular valor do desconto
+ ;ver percentagem de estação cheia
+ ;
  (assert (ACLMessage (communicative-act ACCEPT-PROPOSAL) (sender ?n) (receiver ?s) (content cooling) ))
  (retract ?m)
 )
 
-
+;se recusar oferta, verifica se tiver espaço
+;se tiver, aumenta desconto
 
 
 (defrule send-a-message
