@@ -80,7 +80,6 @@ public class MainContainer {
         profile.setParameter(Profile.MAIN_PORT, port);
         // create a non-main agent container
         ContainerController container = rt.createAgentContainer(profile);
-
         return container;
     }
 
