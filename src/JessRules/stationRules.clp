@@ -5,6 +5,7 @@
               (slot language) (slot ontology) (slot content)
               (slot encoding) (multislot reply-to) (slot reply-by))
 
+(deftemplate MyAgent (slot name))
 
 
 
