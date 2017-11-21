@@ -1,3 +1,5 @@
+package JessRules;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -169,4 +171,4 @@ public class JessSend implements Userfunction {
     }
 
 
-} // end JessSend class
+} // end JessRules.JessSend class
