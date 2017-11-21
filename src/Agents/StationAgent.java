@@ -1,4 +1,8 @@
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 
 import java.awt.geom.Point2D;
 
@@ -6,18 +10,19 @@ public class StationAgent extends Agent {
 
     //Agent Position
     public Point2D position;
-    public  int capacity, load;
+    public int capacity, load;
 
-
-    @Override
-    protected void setup() {
-        super.setup();
-    }
 
     public StationAgent(Point2D position, int capacity, int load) {
         this.position = position;
         this.capacity = capacity;
-        this.load = load;
+        this.load = 0;
+    }
+
+    @Override
+    protected void setup() {
+        super.setup();
+        registerInDF();
     }
 
     public int getCapacity() {
@@ -44,8 +49,34 @@ public class StationAgent extends Agent {
         this.position = position;
     }
 
+    private void registerInDF() {
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("station");
+        sd.setName(getLocalName());
+        dfd.addServices(sd);
+
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
 
 
+    }
+
+    @Override
+    protected void takeDown() {
+        System.out.println("Ending Station");
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+        super.takeDown();
+
+    }
 
 
 }
