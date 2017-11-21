@@ -1,10 +1,10 @@
 import jade.core.Agent;
-import jade.core.
 import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
-public class myAgent extends Agent
+public class UserAgent extends Agent
 {
     protected void setup()
     {
