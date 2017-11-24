@@ -24,11 +24,6 @@ public class StationAgent extends Agent {
 
 
     public StationAgent() {
-        Object[] args = getArguments();
-        if (args != null && args.length > 0) {
-            this.position = new Point((int) args[0],(int) args[1]);
-            capacity = (int) args[2];
-        }
         load = 0;
         offersAccepted=0;
         offersRejected=0;
@@ -44,6 +39,12 @@ public class StationAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Staring Station");
+
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            this.position = new Point((int) args[0],(int) args[1]);
+            capacity = (int) args[2];
+        }
         super.setup();
         registerInDF();
     }

@@ -32,9 +32,9 @@ public class Spawner extends Agent {
                 System.out.println("Creating Station nº" + i + " , x:" + x + ", y:" + y);
 
                 Object[] objs = new Object[3];
-                objs[0] = 2;
-                objs[1] = 2;
-                objs[2] = 2;
+                objs[0] = x;
+                objs[1] = y;
+                objs[2] = seats;
 
                 AgentController ag = this.getContainerController().createNewAgent("StationAgent_" + UUID.randomUUID(), "Agents.StationAgent", objs);
                 ag.start();
