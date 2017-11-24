@@ -1,19 +1,31 @@
+package Agents;
+
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 public class StationAgent extends Agent {
 
     //Agent Position
-    public Point2D position;
+    public Point position;
     public int capacity, load;
 
 
-    public StationAgent(Point2D position, int capacity, int load) {
+    public StationAgent() {
+        Random rand = new Random();
+        this.position = new Point(rand.nextInt(100),rand.nextInt(100));
+        capacity=rand.nextInt(10);
+        load=0;
+
+    }
+
+    public StationAgent(Point position, int capacity, int load) {
         this.position = position;
         this.capacity = capacity;
         this.load = 0;
@@ -21,6 +33,7 @@ public class StationAgent extends Agent {
 
     @Override
     protected void setup() {
+        System.out.println("Staring Station");
         super.setup();
         registerInDF();
     }
@@ -45,7 +58,7 @@ public class StationAgent extends Agent {
         return position;
     }
 
-    public void setPosition(Point2D position) {
+    public void setPosition(Point position) {
         this.position = position;
     }
 

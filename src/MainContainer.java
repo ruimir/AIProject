@@ -20,11 +20,9 @@ public class MainContainer {
         MainContainer a = new MainContainer();
 
         a.initMainContainerInPlatform("localhost", "9888", "MainContainer");
-        a.startAgentInPlatform("TempSensor1", "TemperatureSensorAgent");
-        a.startAgentInPlatform("TempSensor2", "TemperatureSensorAgent");
-        a.startAgentInPlatform("TempSensor3", "TemperatureSensorAgent");
+        a.startAgentInPlatform("Station1", "Agents.StationAgent");
+        a.startAgentInPlatform("User1", "Agents.UserAgent");
 
-        a.startAgentInPlatform("MonitorAgent", "MonitorAgent");
 
         /*
         try {

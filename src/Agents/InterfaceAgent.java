@@ -47,7 +47,14 @@ public class InterfaceAgent extends Agent
 
         public class SendMessage extends TickerBehaviour {
 
-            public SendMessage(Agent agent, long timeout)
+            public SendMessage(Agent a, long period) {
+                super(a, period);
+            }
+
+            @Override
+            protected void onTick() {
+
+            }
         }
     }
 
