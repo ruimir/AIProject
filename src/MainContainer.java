@@ -5,17 +5,14 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
-/**
- *
- */
-
-/**
- * @author Filipe Gon�alves
- */
 public class MainContainer {
 
     Runtime rt;
     ContainerController container;
+
+    static int stationRowsNo = 8;
+    static int stationColumnsNo = 8;
+    static float gridUnitDistance = 100f;
 
     public static void main(String[] args) {
         MainContainer a = new MainContainer();
@@ -24,8 +21,16 @@ public class MainContainer {
         //a.startAgentInPlatform("Station1", "Agents.StationAgent");
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
-        StationParams stationEx = new StationParams(0,0,30,10);
-        a.startStationAgent("User2", "Agents.StationAgent", stationEx);
+
+        for(int i = 0; i < stationRowsNo; i++){
+            for(int j = 0; j < stationColumnsNo; j++){
+                float x = stationColumnsNo * gridUnitDistance;
+                float y = stationRowsNo * gridUnitDistance;
+
+                StationParams stationEx = new StationParams(x, y,30,15);
+                a.startStationAgent("Station_" + i + "_" + j, "Agents.StationAgent", stationEx);
+            }
+        }
 
 
         /*
