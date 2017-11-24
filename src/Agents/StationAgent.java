@@ -8,33 +8,31 @@ import jade.domain.FIPAException;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.Random;
 
 public class StationAgent extends Agent {
 
-    //Agent Position
+    //Station Position Position on the ambient
     public Point position;
     public int capacity, load;
 
 
     public StationAgent() {
-        Random rand = new Random();
-        this.position = new Point(rand.nextInt(100),rand.nextInt(100));
-        capacity=rand.nextInt(10);
-        load=0;
 
-    }
+        // Isso não faz sentido. A posição das estações não é aleatória.
+        //Random rand = new Random();
+        //this.position = new Point(rand.nextInt(100),rand.nextInt(100));
+        //capacity=rand.nextInt(10);
+        //load=0;
 
-    public StationAgent(Point position, int capacity, int load) {
-        this.position = position;
-        this.capacity = capacity;
-        this.load = 0;
     }
 
     @Override
     protected void setup() {
         System.out.println("Staring Station");
+
         super.setup();
+        StationParams myParams = (StationParams) getArguments()[0];
+        System.out.println("My Capacity is: " + myParams.capacity);
         registerInDF();
     }
 

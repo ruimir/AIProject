@@ -1,3 +1,4 @@
+import Agents.StationParams;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -20,8 +21,11 @@ public class MainContainer {
         MainContainer a = new MainContainer();
 
         a.initMainContainerInPlatform("localhost", "9888", "MainContainer");
-        a.startAgentInPlatform("Station1", "Agents.StationAgent");
-        a.startAgentInPlatform("User1", "Agents.UserAgent");
+        //a.startAgentInPlatform("Station1", "Agents.StationAgent");
+        //a.startAgentInPlatform("User1", "Agents.UserAgent");
+        //a.startAgentInPlatform("User1", "Agents.UserAgent");
+        StationParams stationEx = new StationParams(0,0,30,10);
+        a.startStationAgent("User2", "Agents.StationAgent", stationEx);
 
 
         /*
@@ -104,8 +108,22 @@ public class MainContainer {
         try {
             AgentController ac = container.createNewAgent(name, classpath, new Object[0]);
             ac.start();
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startStationAgent(String name, String classpath, StationParams params) {
+        try {
+            AgentController ac = container.createNewAgent(name, classpath, new Object[]{(Object)params});
+            ac.start();
+        }
+
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
+
