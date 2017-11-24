@@ -13,7 +13,7 @@ public class UserSpawner extends Agent {
         Behaviour loop = new TickerBehaviour( this, 60000 ) //creates user every 5 minutes
         {
             protected void onTick() {
-                System.out.println("New User Spawned");
+                System.out.println("Spawning new User:");
                 try {
                     AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID() , "User", new Object[]{});
                     ag.start();
@@ -26,13 +26,13 @@ public class UserSpawner extends Agent {
         };
 
         addBehaviour( loop );
-        System.out.println("Spawner agent initialized.");
+        System.out.println("Spawner Agent Initialized.");
     }
 
     @Override
     protected void takeDown(){
         super.takeDown();
-        System.out.println("User agent terminated.");
+        System.out.println("User Spawner Terminated.");
     }
 
 
