@@ -10,7 +10,7 @@ public class UserSpawner extends Agent {
     @Override
     protected void setup(){
         super.setup();
-        Behaviour loop = new TickerBehaviour( this, 50000 ) //creates user every 5 minutes
+        Behaviour loop = new TickerBehaviour( this, 60000 ) //creates user every 5 minutes
         {
             protected void onTick() {
                 System.out.println("New User Spawned");
