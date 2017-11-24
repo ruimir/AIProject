@@ -1,10 +1,14 @@
 package Agents;
 
+import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -15,13 +19,19 @@ public class StationAgent extends Agent {
     //Agent Position
     public Point position;
     public int capacity, load;
+    public int offersAccepted;
+    public int offersRejected;
 
 
     public StationAgent() {
-        Random rand = new Random();
-        this.position = new Point(rand.nextInt(100),rand.nextInt(100));
-        capacity=rand.nextInt(10);
-        load=0;
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            this.position = new Point((int) args[0],(int) args[1]);
+            capacity = (int) args[2];
+        }
+        load = 0;
+        offersAccepted=0;
+        offersRejected=0;
 
     }
 
@@ -79,6 +89,7 @@ public class StationAgent extends Agent {
 
     }
 
+
     @Override
     protected void takeDown() {
         System.out.println("Ending Station");
@@ -89,6 +100,34 @@ public class StationAgent extends Agent {
         }
         super.takeDown();
 
+    }
+
+
+    private class SendMetrics extends TickerBehaviour {
+
+        public SendMetrics(Agent a, long period) {
+            super(a, period);
+        }
+
+
+        @Override
+        protected void onTick() {
+            ACLMessage mensagem = new ACLMessage(ACLMessage.CONFIRM);
+            AID receiver = new AID();
+            receiver.setLocalName("ControllerAgent");
+            mensagem.addReceiver(receiver);
+            mensagem.setContent(""+load + ";" + capacity + ";" + offersAccepted + ";"+offersRejected);
+            myAgent.send(mensagem);
+
+        }
+    }
+
+    private class Receiver extends CyclicBehaviour {
+
+        @Override
+        public void action() {
+
+        }
     }
 
 
