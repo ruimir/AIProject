@@ -9,23 +9,66 @@
 ;ideia:ter um limite de ofertas, quando ultrapassar, recusar novas propostas
 ;questão, e se user sair da area!?
 
+;para uma estação, quantas tentativas fez?
+(bind ?tries (new java.util.HashMap)) <Java-Object:java.util.HashMap>
+
+
+
 
 (defrule good-offer
- ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content>0.7 ;70%desconto!})
+ "Aceitar proposta caso o desconto oferecido seja muito bom, neste caso, mais de 70%"
+ ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content > 0.7})
  (MyAgent (name ?n))
  =>
- (assert (ACLMessage (communicative-act ACCEPT-PROPOSAL) (sender ?n) (receiver ?s) (content cooling) ))
+ (assert (ACLMessage (communicative-act ACCEPT-PROPOSAL) (sender ?n) (receiver ?s) ))
  (retract ?m)
 )
 
-(defrule proposal-refusal
- ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content<0.4 ;apenas 40%})
+
+(defrule proposal-between
+ "Aceitar proposta caso o deconto seja pequeno"
+ ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content > 0.4 && content < 0.7})
  (MyAgent (name ?n))
  =>
- ;se tentativas pelo agente <3
- (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content cooling) ))
- ;senão
- assert um para recusar mais ofertas
+  (bind ?odd (call Math random))
+  (if (> ?odd 0.5) then
+   (assert (ACLMessage (communicative-act ACCEPT-PROPOSAL) (sender ?n) (receiver ?s) ))
+
+  else
+  ;se tentativas pelo agente <3
+  (if (call ?tries containsKey ?s)
+    then
+    (if (> (call get ?tries ?s) 3) then
+    (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content true)))
+     else
+    (call ?tries put ?s (+ 1 (call ?tries get ?s)))
+    (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content false))))
+  else (call ?tries put ?s 1) (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content false))) )
+  )
+
+ (retract ?m)
+)
+
+
+
+
+
+;TODO:TESTAR -> e ver se o content reconhece!
+(defrule proposal-refusal
+ "Aceitar proposta caso o deconto seja pequeno"
+ ?m <- (ACLMessage (communicative-act PROPOSAL) (sender ?s) (content ?c) (receiver ?r) {content < 0.4})
+ (MyAgent (name ?n))
+ =>
+  ;se tentativas pelo agente <3
+  (if (call ?tries containsKey ?s)
+    then
+    (if (> (call get ?tries ?s) 3) then
+    (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content true)))
+     else
+    (call ?tries put ?s (+ 1 (call ?tries get ?s)))
+    (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content false))))
+  else (call ?tries put ?s 1) (assert (ACLMessage (communicative-act REJECT-PROPOSAL) (sender ?n) (receiver ?s) (content false))) )
+
  (retract ?m)
 )
 
