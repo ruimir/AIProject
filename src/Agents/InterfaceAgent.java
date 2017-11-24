@@ -1,3 +1,5 @@
+package Agents;
+
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
@@ -33,11 +35,11 @@ public class InterfaceAgent extends Agent
 
             this.addBehaviour(new ReceiveBehaviour());
             System.out.println("Olá e bem vindo");
-            obter a listas dos agentes
+            /*obter a listas dos agentes
                     selecione uma etscao paa ver info
                     input/escolha de uma estacao
                     envia mensagem para obter info
-                    recebe info
+                    recebe info*/
 
             this.addBehaviour(new SendMessage(this,60000));
 

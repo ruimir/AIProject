@@ -12,6 +12,7 @@
 
 
 
+
 (defrule welcome-toddlers2
     "Give a special greeting to young children"
     (person {age < 3})
