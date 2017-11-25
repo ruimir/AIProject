@@ -171,7 +171,7 @@ public class UserAgent extends Agent {
                     if (offer > 0.7 && !acceptedProposal) {
                         ACLMessage reply = message.createReply();
                         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                        myAgent.send(reply);
+
                         //mudar posição e estacao finais
 
                         System.out.println("Aceitou");
@@ -180,26 +180,31 @@ public class UserAgent extends Agent {
                         float newY = Float.parseFloat(message.getContent().split(";")[2]);
                         setEndingPoint(new Vec2(newX, newY));
 
+                        myAgent.send(reply);
+
                     } else if (offer < 0.4) {
                         ACLMessage reply = message.createReply();
                         reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                        reply.setContent(position.x + ";" + position.y);
                         myAgent.send(reply);
                     } else {
                         Random rand = new Random();
                         if (rand.nextInt(101) > 50 && !acceptedProposal) {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                            myAgent.send(reply);
+
 
                             System.out.println("Aceitou");
                             acceptedProposal = true;
                             float newX = Float.parseFloat(message.getContent().split(";")[1]);
                             float newY = Float.parseFloat(message.getContent().split(";")[2]);
                             setEndingPoint(new Vec2(newX, newY));
+                            myAgent.send(reply);
 
                         } else {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                            reply.setContent(position.x + ";" + position.y);
                             myAgent.send(reply);
                         }
                     }

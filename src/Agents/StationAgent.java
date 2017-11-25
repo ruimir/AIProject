@@ -152,6 +152,7 @@ public class StationAgent extends Agent {
 
 
                 } else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
+
                     String[] split = message.getContent().split(";");
                     float userX = Float.parseFloat(split[0]);
                     float userY = Float.parseFloat(split[1]);
