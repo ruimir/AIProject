@@ -6,58 +6,30 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-
 public class StationAgent extends Agent {
 
-    //Station Position Position on the ambient
-    public Point position;
-    public int capacity, load;
+    //Station Position x and y on the ambient
+    float x;
+    float y;
+    int capacity; //how many bikes can this  station fit.
+    int parkedBikes; //howm many bikes are currently on station
 
 
-    public StationAgent() {
-
-        // Isso não faz sentido. A posição das estações não é aleatória.
-        //Random rand = new Random();
-        //this.position = new Point(rand.nextInt(100),rand.nextInt(100));
-        //capacity=rand.nextInt(10);
-        //load=0;
-
-    }
 
     @Override
     protected void setup() {
-        System.out.println("Staring Station");
+        System.out.println("Starting Station...");
 
         super.setup();
         StationParams myParams = (StationParams) getArguments()[0];
-        System.out.println("My Capacity is: " + myParams.capacity);
+        this.x = myParams.x;
+        this.y = myParams.y;
+        this.capacity = myParams.capacity;
+        this.parkedBikes = myParams.parkedBikes;
+
+        System.out.println(String.format("Station at (%s, %s) initialized with %s bikes of %s.",x,y,parkedBikes,capacity ));
+
         registerInDF();
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getLoad() {
-        return load;
-    }
-
-    public void setLoad(int load) {
-        this.load = load;
-    }
-
-    public Point2D getPosition() {
-        return position;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
     }
 
     private void registerInDF() {
@@ -74,15 +46,16 @@ public class StationAgent extends Agent {
             e.printStackTrace();
         }
 
-
     }
 
     @Override
     protected void takeDown() {
-        System.out.println("Ending Station");
+        System.out.println("Finishing Station...");
         try {
             DFService.deregister(this);
-        } catch (FIPAException e) {
+            System.out.println(getName() + " finished with success.");
+        }
+        catch (FIPAException e) {
             e.printStackTrace();
         }
         super.takeDown();
