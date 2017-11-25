@@ -2,6 +2,7 @@ package Agents;
 
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -47,32 +48,49 @@ public class UserSpawnerAgent extends Agent {
         Behaviour loop = new TickerBehaviour(this, 1000) //creates user every 5 minutes
         {
             protected void onTick() {
-                System.out.println("Spawning new User:");
-                try {
-                    Random rand = new Random();
-                    int chosen1 = 1;
-                    int chosen2 = 1;
-                    while (chosen1 == chosen2) {
-                        chosen1 = rand.nextInt(stations.size());
-                        chosen2 = rand.nextInt(stations.size());
-                    }
-                    StationParams stationEx1 = stations.get(chosen1);
-                    StationParams stationEx2 = stations.get(chosen2);
-
-                    UserParams up = new UserParams(new Point2D.Float(stationEx1.x, stationEx1.y), new Point2D.Float(stationEx2.x, stationEx2.y), stationEx1.name, stationEx2.name);
-
-
-                    AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.UserAgent", new Object[]{(Object) up});
-                    ag.start();
-
-                } catch (Exception e) {
-
-                }
+                SpawnUser(myAgent);
             }
         };
 
-        addBehaviour(loop);
+        Behaviour spaw1user = new SimpleBehaviour() {
+            @Override
+            public void action() {
+                SpawnUser(myAgent);
+            }
+
+            @Override
+            public boolean done() {
+                return true;
+            }
+        };
+
+       // addBehaviour(loop);
+        addBehaviour(spaw1user);
         System.out.println("UserSpawnerAgent Agent Initialized.");
+    }
+
+    void SpawnUser(Agent myAgent){
+        System.out.println("Spawning new User:");
+        try {
+            Random rand = new Random();
+            int chosen1 = 1;
+            int chosen2 = 1;
+            while (chosen1 == chosen2) {
+                chosen1 = rand.nextInt(stations.size());
+                chosen2 = rand.nextInt(stations.size());
+            }
+            StationParams stationEx1 = stations.get(chosen1);
+            StationParams stationEx2 = stations.get(chosen2);
+
+            UserParams up = new UserParams(new Point2D.Float(stationEx1.x, stationEx1.y), new Point2D.Float(stationEx2.x, stationEx2.y), stationEx1.name, stationEx2.name);
+
+
+            AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.UserAgent", new Object[]{(Object) up});
+            ag.start();
+
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
