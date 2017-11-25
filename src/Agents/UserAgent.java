@@ -26,9 +26,9 @@ public class UserAgent extends Agent {
         System.out.println("Staring User");
         UserParams args = (UserParams) getArguments()[0];
 
-        position = (Vec2) args.startingPoint;
-        startingPont = (Vec2) args.startingPoint;
-        setEndingPoint((Vec2) args.endingPoint);
+        position = new Vec2( args.startingPoint.x, args.startingPoint.y);
+        startingPont = new Vec2(position.x, position.y);
+        setEndingPoint(new Vec2( args.endingPoint.x, args.endingPoint.y));
         startingStation = args.startingAgent;
         endingStation = args.endingAgent;
 
