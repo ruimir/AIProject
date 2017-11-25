@@ -3,30 +3,26 @@ package Agents;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
-import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.Random;
 
 public class UserAgent extends Agent {
     DFAgentDescription[] result;
     private String startingStation;
     private String endingStation;
-    private Point2D position, endingPoint, startingPont;
+    private Point2D.Float position, endingPoint, startingPont;
 
     protected void setup() {
         //step 1 -> choose staring point
         //step 2 -> chosse ending point
         System.out.println("Staring User");
-        Object[] args = getArguments();
-        position=new Point((Point) args[0]);
-        startingPont=new Point((Point) args[0]);
-        endingPoint=new Point((Point) args[1]);
+        UserParams args = (UserParams) getArguments()[0];
+
+        position = args.startingPoint;
+        startingPont = args.startingPoint;
+        endingPoint = args.endingPoint;
 
 
         //step 3 -> start moving
@@ -108,6 +104,11 @@ public class UserAgent extends Agent {
 
         @Override
         public void action() {
+            ACLMessage message = myAgent.receive();
+            if (message != null) {
+            } else {
+                block();
+            }
 
         }
     }

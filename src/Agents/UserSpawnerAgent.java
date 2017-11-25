@@ -4,8 +4,9 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 
-import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,36 +15,32 @@ import java.util.UUID;
 //test
 public class UserSpawnerAgent extends Agent {
 
-    Map<Integer, Point> stations;
+    Map<Integer, Point2D.Float> stations;
 
     @Override
     protected void setup() {
         super.setup();
         stations = new HashMap<>();
-        Random rand = new Random();
-        for (int i = 0; i < 10; i++) {
-            int x = rand.nextInt(100);
-            int y = rand.nextInt(100);
-            int seats = rand.nextInt(10);
+        int stationRowsNo = 8;
+        int stationColumnsNo = 8;
+        float gridUnitDistance = 100f;
 
+        for (int i = 0; i < stationRowsNo; i++) {
+            for (int j = 0; j < stationColumnsNo; j++) {
+                float x = stationColumnsNo * gridUnitDistance;
+                float y = stationRowsNo * gridUnitDistance;
 
-
-            try {
-                System.out.println("Creating Station nº" + i + " , x:" + x + ", y:" + y);
-
-                Object[] objs = new Object[3];
-                objs[0] = x;
-                objs[1] = y;
-                objs[2] = seats;
-
-                AgentController ag = this.getContainerController().createNewAgent("StationAgent_" + UUID.randomUUID(), "Agents.StationAgent", objs);
-                ag.start();
-                stations.put((stations.size()), new Point(x, y));
-            } catch (Exception e) {
-
+                StationParams stationEx = new StationParams(x, y, 30, 15);
+                try {
+                    AgentController ag = this.getContainerController().createNewAgent("Station_" + i + "_" + j, "Agents.StationAgent", new Object[]{(Object) stationEx});
+                    ag.start();
+                    stations.put((stations.size()), new Point2D.Float(x, y));
+                } catch (StaleProxyException e) {
+                    e.printStackTrace();
+                }
             }
-
         }
+
 
         Behaviour loop = new TickerBehaviour(this, 60000) //creates user every 5 minutes
         {
@@ -57,12 +54,10 @@ public class UserSpawnerAgent extends Agent {
                         chosen1 = rand.nextInt(stations.size());
                         chosen2 = rand.nextInt(stations.size());
                     }
+                    UserParams up = new UserParams(stations.get(chosen1), stations.get(chosen2));
 
-                    Object[] objs = new Object[3];
-                    objs[0] = new Point(stations.get(chosen1));
-                    objs[1] = new Point(stations.get(chosen1));
 
-                    AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.User", new Object[]{new Point(stations.get(chosen1)), new Point(stations.get(chosen2))});
+                    AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.User", new Object[]{(Object) up});
                     ag.start();
                 } catch (Exception e) {
 
