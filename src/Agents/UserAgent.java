@@ -16,12 +16,14 @@ import java.util.Random;
 public class UserAgent extends Agent {
     DFAgentDescription[] result;
     float totalDistance;
-    float speed = 4f; // speed in meters per second
+    float speed = 16f; // speed in meters per second
     int refreshRate = 20;
     private String startingStation;
     private String endingStation;
     private Vec2 position, endingPoint, startingPont;
     private Vec2 movementDir;
+
+    private boolean travelComplete = false;
 
     protected void setup() {
         //step 1 -> choose staring point
@@ -43,15 +45,25 @@ public class UserAgent extends Agent {
         //step 3 -> start moving
         Behaviour movementLoop = new TickerBehaviour(this, refreshRate) {
             protected void onTick() {
-                Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
-                position.addMe(delta);
 
+                if(speed > 0 && !travelComplete) {
+                    Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
+                    position.addMe(delta);
+                }
 
                 //step 3.1 -> check progression
                 float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
-                // System.out.println(completion);
-                if (completion > 0.75) {
-                    //  System.out.println(completion + " || " + position.x + " " + position.y);
+                System.out.println(completion);
+                if (completion > 0.75 && !travelComplete) {
+                    System.out.println(completion + " || " + position.x + " " + position.y);
+                    broadCastPosition(myAgent);
+
+                }
+
+                if(completion >= 1){
+                    speed = 0;
+                    position = endingPoint;
+                    travelComplete = true;
                 }
 
 
@@ -69,6 +81,30 @@ public class UserAgent extends Agent {
         //step 6 -> adapt to offers
 
 
+    }
+
+    void broadCastPosition(Agent myAgent){
+        if (result.length == 0) {
+            //Pesquisa Inicial de Estações
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("station");
+            template.addServices(sd);
+            try {
+                result = DFService.search(myAgent, template);
+            } catch (FIPAException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < result.length; i++) {
+            ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
+            mensagem.addReceiver(result[i].getName());
+            mensagem.setContent("" + position.getX() + ";" + position.getY());
+
+            myAgent.send(mensagem);
+
+        }
     }
 
     private void setMovementDir() {

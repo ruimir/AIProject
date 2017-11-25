@@ -1,1 +1,1 @@
-http://valkyrie.lan:7778/acc
+http://thiagos-mbp.lan:7778/acc
