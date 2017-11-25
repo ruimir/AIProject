@@ -7,7 +7,6 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
 import java.awt.geom.Point2D;
-import Agents.Utils.Vec2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -16,7 +15,8 @@ import java.util.UUID;
 //test
 public class UserSpawnerAgent extends Agent {
 
-    Map<Integer, Vec2> stations;
+    Map<Integer, StationParams> stations;
+
 
     @Override
     protected void setup() {
@@ -34,8 +34,9 @@ public class UserSpawnerAgent extends Agent {
                 StationParams stationEx = new StationParams(x, y, 30, 15);
                 try {
                     AgentController ag = this.getContainerController().createNewAgent("Station_" + i + "_" + j, "Agents.StationAgent", new Object[]{(Object) stationEx});
+                    stationEx.name = ag.getName();
                     ag.start();
-                    stations.put((stations.size()), new Vec2(x, y));
+                    stations.put((stations.size()), stationEx);
                 } catch (StaleProxyException e) {
                     e.printStackTrace();
                 }
@@ -55,11 +56,15 @@ public class UserSpawnerAgent extends Agent {
                         chosen1 = rand.nextInt(stations.size());
                         chosen2 = rand.nextInt(stations.size());
                     }
-                    UserParams up = new UserParams(stations.get(chosen1), stations.get(chosen2));
+                    StationParams stationEx1 = stations.get(chosen1);
+                    StationParams stationEx2 = stations.get(chosen2);
+
+                    UserParams up = new UserParams(new Point2D.Float(stationEx1.x, stationEx1.y), new Point2D.Float(stationEx2.x, stationEx2.y), stationEx1.name, stationEx2.name);
 
 
                     AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.UserAgent", new Object[]{(Object) up});
                     ag.start();
+
                 } catch (Exception e) {
 
                 }

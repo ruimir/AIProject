@@ -6,6 +6,7 @@ public class StationParams {
     public float y;
     public int capacity;
     public int parkedBikes;
+    public String name;
 
 
     public StationParams(float x, float y, int capacity, int parkedBikes) {

@@ -1,5 +1,6 @@
 package Agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -7,6 +8,7 @@ import jade.core.behaviours.TickerBehaviour;
 
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
+import jade.tools.sniffer.Message;
 import sun.jvm.hotspot.runtime.Thread;
 
 import java.awt.geom.Point2D;
@@ -36,6 +38,8 @@ public class UserAgent extends Agent {
         position = (Vec2) args.startingPoint;
         startingPont = (Vec2) args.startingPoint;
         endingPoint = (Vec2) args.endingPoint;
+        startingStation=args.startingAgent;
+        endingStation=args.endingAgent;
 
         //step 2.5 -> Set Movement direction
         setMovementDir();
