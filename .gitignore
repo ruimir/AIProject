@@ -2,3 +2,6 @@
 .idea/*
 lib/*
 out/*
+**/.idea/workspace.xml 
+**/.idea/tasks.xml
+**/out/*
