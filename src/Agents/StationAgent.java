@@ -154,6 +154,7 @@ public class StationAgent extends Agent {
                 } else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
 
                     String[] split = message.getContent().split(";");
+                    offersRejected++;
                     float userX = Float.parseFloat(split[0]);
                     float userY = Float.parseFloat(split[1]);
                     if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
@@ -164,6 +165,10 @@ public class StationAgent extends Agent {
                         reply.setPerformative(ACLMessage.PROPOSE);
                         reply.setContent(offer + ";" + x + ";" + y);
                         myAgent.send(reply);
+                    } else if (message.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+
+                        offersAccepted++;
+
                     }
                 }
 
