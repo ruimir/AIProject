@@ -26,6 +26,7 @@ public class UserAgent extends Agent {
     private boolean travelComplete = false;
 
     protected void setup() {
+        result = new DFAgentDescription[0];
         //step 1 -> choose staring point
         //step 2 -> chosse ending point
         System.out.println("Staring User");
@@ -101,6 +102,7 @@ public class UserAgent extends Agent {
             ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
             mensagem.addReceiver(result[i].getName());
             mensagem.setContent("" + position.getX() + ";" + position.getY());
+
 
             myAgent.send(mensagem);
 
