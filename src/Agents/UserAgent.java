@@ -1,6 +1,7 @@
 package Agents;
 
 import Agents.Utils.Vec2;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -23,6 +24,7 @@ public class UserAgent extends Agent {
     private Vec2 position, endingPoint, startingPont;
     private Vec2 movementDir;
 
+    boolean travelAuth = false;
     private boolean travelComplete = false;
     boolean acceptedProposal = false;
 
@@ -41,40 +43,60 @@ public class UserAgent extends Agent {
 
         //step 2.5 -> Set Movement direction
         setMovementDir();
+
+
         System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPont.x, startingPont.y, endingPoint.x, endingPoint.y, movementDir.x, movementDir.y));
 
+        //step 2.75 -> notify agent it is lifting bike
+        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+        message.setContent("lift");
+        AID receiver = new AID();
+        receiver.setName(startingStation);
+        message.addReceiver(receiver);
+        send(message);
 
         //step 3 -> start moving
-        Behaviour movementLoop = new TickerBehaviour(this, refreshRate) {
-            protected void onTick() {
 
-                if(speed > 0 && !travelComplete) {
-                    Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
-                    position.addMe(delta);
+        if(travelAuth) {
+            Behaviour movementLoop = new TickerBehaviour(this, refreshRate) {
+                protected void onTick() {
+
+                    if (speed > 0 && !travelComplete) {
+                        Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
+                        position.addMe(delta);
+                    }
+
+                    //step 3.1 -> check progression
+                    float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
+                    System.out.println(completion);
+                    if (completion > 0.75 && !travelComplete) {
+                        System.out.println(completion + " || " + position.x + " " + position.y);
+                        broadCastPosition(myAgent);
+
+                    }
+
+                    if (completion >= 1) {
+                        speed = 0;
+                        position = endingPoint;
+                        travelComplete = true;
+
+                        ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+                        message.setContent("drop");
+                        AID receiver = new AID();
+                        receiver.setName(endingStation);
+                        message.addReceiver(receiver);
+                        myAgent.send(message);
+
+
+                    }
+
+
                 }
+            };
+            addBehaviour(movementLoop);
 
-                //step 3.1 -> check progression
-                float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
-                System.out.println(completion);
-                if (completion > 0.75 && !travelComplete) {
-                    System.out.println(completion + " || " + position.x + " " + position.y);
-                    broadCastPosition(myAgent);
-
-                }
-
-                if(completion >= 1){
-                    speed = 0;
-                    position = endingPoint;
-                    travelComplete = true;
-                }
-
-
-            }
-        };
-        addBehaviour(movementLoop);
-
-        this.addBehaviour(new Receiver());
-
+            this.addBehaviour(new Receiver());
+        }
 
         // this.addBehaviour(new PositionChecker(this, 1000));
 
@@ -211,6 +233,41 @@ public class UserAgent extends Agent {
 
                 } else if (message.getPerformative() == ACLMessage.CONFIRM) {
                     if (message.getContent().equals("lift")) {
+
+                        Behaviour movementLoop = new TickerBehaviour(myAgent, refreshRate) {
+                            protected void onTick() {
+
+                                if (speed > 0 && !travelComplete) {
+                                    Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
+                                    position.addMe(delta);
+                                }
+
+                                //step 3.1 -> check progression
+                                float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
+                                System.out.println(completion);
+                                if (completion > 0.75 && !travelComplete) {
+                                    System.out.println(completion + " || " + position.x + " " + position.y);
+                                    broadCastPosition(myAgent);
+                                }
+
+                                if (completion >= 1) {
+                                    speed = 0;
+                                    position = endingPoint;
+                                    travelComplete = true;
+
+                                    ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+                                    message.setContent("drop");
+                                    AID receiver = new AID();
+                                    receiver.setName(endingStation);
+                                    message.addReceiver(receiver);
+                                    myAgent.send(message);
+                                }
+                            }
+                        };
+
+                        addBehaviour(movementLoop);
+
+                        myAgent.addBehaviour(new Receiver());
 
                     } else if (message.getContent().equals("drop")) {
                         myAgent.doDelete();

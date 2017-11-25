@@ -108,7 +108,7 @@ public class StationAgent extends Agent {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.CONFIRM);
                             reply.setContent("lift");
-                            parkedBikes++;
+                            parkedBikes--;
                             myAgent.send(reply);
                         } else {
                             ACLMessage reply = message.createReply();
@@ -120,7 +120,7 @@ public class StationAgent extends Agent {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.CONFIRM);
                             reply.setContent("drop");
-                            parkedBikes--;
+                            parkedBikes++;
                             myAgent.send(reply);
                         } else {
                             ACLMessage reply = message.createReply();
@@ -132,6 +132,7 @@ public class StationAgent extends Agent {
                 }
                 float unit = UserSpawnerAgent.gridUnitDistance;
                 int nRange = 1;
+
 
                 if (message.getPerformative() == ACLMessage.INFORM) {
                     String[] split = message.getContent().split(";");
@@ -151,7 +152,9 @@ public class StationAgent extends Agent {
                     }
 
 
-                } else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
+                }
+
+                else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
 
                     String[] split = message.getContent().split(";");
                     float userX = Float.parseFloat(split[0]);
