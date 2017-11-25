@@ -5,7 +5,10 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
 import java.util.Random;
@@ -26,9 +29,9 @@ public class UserAgent extends Agent {
         System.out.println("Staring User");
         UserParams args = (UserParams) getArguments()[0];
 
-        position = new Vec2( args.startingPoint.x, args.startingPoint.y);
+        position = new Vec2(args.startingPoint.x, args.startingPoint.y);
         startingPont = new Vec2(position.x, position.y);
-        setEndingPoint(new Vec2( args.endingPoint.x, args.endingPoint.y));
+        setEndingPoint(new Vec2(args.endingPoint.x, args.endingPoint.y));
         startingStation = args.startingAgent;
         endingStation = args.endingAgent;
 
@@ -89,6 +92,19 @@ public class UserAgent extends Agent {
 
         @Override
         protected void onTick() {
+            if (result.length == 0) {
+                //Pesquisa Inicial de Estações
+                DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("station");
+                template.addServices(sd);
+                try {
+                    result = DFService.search(myAgent, template);
+                } catch (FIPAException e) {
+                    e.printStackTrace();
+                }
+            }
+
             for (int i = 0; i < result.length; i++) {
                 ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
                 mensagem.addReceiver(result[i].getName());
@@ -138,7 +154,7 @@ public class UserAgent extends Agent {
                     if (message.getContent().equals("lift")) {
 
                     } else if (message.getContent().equals("drop")) {
-                        myAgent.doWait(4000);
+                        myAgent.doDelete();
                     } else if (message.getPerformative() == ACLMessage.REFUSE) {
                         myAgent.doWait(4000);
                     }
