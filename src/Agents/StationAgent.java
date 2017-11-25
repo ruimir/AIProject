@@ -104,7 +104,7 @@ public class StationAgent extends Agent {
             if (message != null) {
                 if (message.getPerformative() == ACLMessage.REQUEST) {
                     if (message.getContent().equals("lift")) {
-                        if (parkedBikes != 0) {
+                        if (parkedBikes > 0) {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.CONFIRM);
                             reply.setContent("lift");
