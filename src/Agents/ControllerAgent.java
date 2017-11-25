@@ -42,7 +42,7 @@ public class ControllerAgent extends Agent {
                         sb.append(it.next()).append(";");
                     }
                     ACLMessage reply = msg.createReply();
-                    reply.setPerformative(ACLMessage.INFORM);
+                    reply.setPerformative(ACLMessage.PROPAGATE);
                     reply.setContent(sb.toString());
                     myAgent.send(reply);
 
