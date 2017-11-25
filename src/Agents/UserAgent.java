@@ -5,8 +5,10 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
+import sun.jvm.hotspot.runtime.Thread;
 
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 public class UserAgent extends Agent {
     DFAgentDescription[] result;
@@ -94,25 +96,60 @@ public class UserAgent extends Agent {
             double ydif = endingPoint.getX() - position.getY();
             xdif = xdif / 20;
             ydif = ydif / 20;
-            System.out.println("Moving from ("+position.getX()+","+position.getY()+") to ("+xdif+","+ydif+")");
+            System.out.println("Moving from (" + position.getX() + "," + position.getY() + ") to (" + xdif + "," + ydif + ")");
             position.setLocation(xdif, ydif);
 
         }
 
     }
 
-    private class Reveiver extends CyclicBehaviour {
+    private class Receiver extends CyclicBehaviour {
 
         @Override
         public void action() {
             ACLMessage message = myAgent.receive();
             if (message != null) {
-            } else {
-                block();
+                if (message.getPerformative() == ACLMessage.PROPOSE) {
+                    float offer = Float.parseFloat(message.getContent());
+                    if (offer > 0.7) {
+                        ACLMessage reply = message.createReply();
+                        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                        myAgent.send(reply);
+                        //mudar posição final
+
+                    } else if (offer < 0.4) {
+                        ACLMessage reply = message.createReply();
+                        reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                        myAgent.send(reply);
+                    } else {
+                        Random rand = new Random();
+                        if (rand.nextInt(101) > 50) {
+                            ACLMessage reply = message.createReply();
+                            reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                            myAgent.send(reply);
+                        } else {
+                            ACLMessage reply = message.createReply();
+                            reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                            myAgent.send(reply);
+                        }
+                    }
+
+                } else if (message.getPerformative() == ACLMessage.CONFIRM) {
+                    if (message.getContent().equals("lift")) {
+
+                    } else if (message.getContent().equals("drop")) {
+                        myAgent.doWait(4000);
+                    } else if (message.getPerformative() == ACLMessage.REFUSE) {
+                        myAgent.doWait(4000);
+                    }
+
+                } else {
+                    block();
+                }
+
             }
-
         }
+
+
     }
-
-
 }//end class myAgent
