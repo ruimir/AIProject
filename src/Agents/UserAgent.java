@@ -23,6 +23,7 @@ public class UserAgent extends Agent {
 
     private Vec2 position, endingPoint, startingPont;
     private Vec2 movementDir;
+    float totalDistance;
 
 
 
@@ -37,7 +38,7 @@ public class UserAgent extends Agent {
 
         position = (Vec2) args.startingPoint;
         startingPont = (Vec2) args.startingPoint;
-        endingPoint = (Vec2) args.endingPoint;
+        setEndingPoint((Vec2) args.endingPoint);
         startingStation=args.startingAgent;
         endingStation=args.endingAgent;
 
@@ -52,12 +53,22 @@ public class UserAgent extends Agent {
             protected void onTick() {
                 Vec2 delta = Vec2.multiply(movementDir,  speed / refreshRate);
                 position.addMe(delta);
-                System.out.println(position.x + " " + position.y);
+
+
+
+                //step 3.1 -> check progression
+                float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
+               // System.out.println(completion);
+                if (completion > 0.75){
+                  //  System.out.println(completion + " || " + position.x + " " + position.y);
+                }
+
+
             }
         };
         addBehaviour(movementLoop);
 
-        //step 3.1 -> check progression
+
 
        // this.addBehaviour(new PositionChecker(this, 1000));
 
@@ -74,26 +85,14 @@ public class UserAgent extends Agent {
         movementDir = Vec2.subtract(endingPoint,startingPont);
         movementDir.normalize();
     }
-    /*
-    class PositionChecker extends TickerBehaviour {
 
-        public PositionChecker(Agent a, long period) {
-            super(a, period);
-        }
+    private void setEndingPoint(Vec2 ep){
+        endingPoint = ep;
+        Vec2 delta = Vec2.subtract(ep,startingPont);
+        totalDistance = delta.getLenght();
 
-        @Override
-        protected void onTick() {
-            double totalDistance = endingPoint.distance(startingPont);
-            double done = position.distance(startingPont);
-            double percentage = done / totalDistance;
+    }
 
-            if (percentage > 0.75) {
-                myAgent.addBehaviour(new PingStations(myAgent, 5000));
-                this.stop();
-            }
-
-        }
-    }*/
 
     class PingStations extends TickerBehaviour {
 
@@ -107,6 +106,7 @@ public class UserAgent extends Agent {
                 ACLMessage mensagem = new ACLMessage(ACLMessage.INFORM);
                 mensagem.addReceiver(result[i].getName());
                 mensagem.setContent("" + position.getX() + ";" + position.getY());
+
                 myAgent.send(mensagem);
             }
 
@@ -115,28 +115,6 @@ public class UserAgent extends Agent {
 
     }
 
-    class Mover extends TickerBehaviour {
-
-        public Mover(Agent a, long period) {
-            super(a, period);
-        }
-
-        @Override
-        protected void onTick() {
-
-            /*
-            double xdif = endingPoint.getX() - position.getX();
-            double ydif = endingPoint.getX() - position.getY();
-            xdif = xdif / 20;
-            ydif = ydif / 20;
-            System.out.println("Moving from ("+position.getX()+","+position.getY()+") to ("+xdif+","+ydif+")");
-            position.setLocation(xdif, ydif);
-            */
-
-
-        }
-
-    }
 
     private class Receiver extends CyclicBehaviour {
 
