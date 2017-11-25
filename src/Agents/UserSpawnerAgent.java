@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.UUID;
 
 //test
-public class Spawner extends Agent {
+public class UserSpawnerAgent extends Agent {
 
     Map<Integer, Point> stations;
 
@@ -71,13 +71,13 @@ public class Spawner extends Agent {
         };
 
         addBehaviour(loop);
-        System.out.println("Spawner Agent Initialized.");
+        System.out.println("UserSpawnerAgent Agent Initialized.");
     }
 
     @Override
     protected void takeDown() {
         super.takeDown();
-        System.out.println("User Spawner Terminated.");
+        System.out.println("User UserSpawnerAgent Terminated.");
     }
 
 
