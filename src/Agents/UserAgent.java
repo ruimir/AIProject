@@ -1,39 +1,61 @@
 package Agents;
 
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import sun.jvm.hotspot.runtime.Thread;
 
 import java.awt.geom.Point2D;
+import Agents.Utils.Vec2;
+
 import java.util.Random;
 
 public class UserAgent extends Agent {
     DFAgentDescription[] result;
     private String startingStation;
     private String endingStation;
-    private Point2D.Float position, endingPoint, startingPont;
 
+    private Vec2 position, endingPoint, startingPont;
+    private Vec2 movementDir;
+
+
+
+
+    float speed =  4f; // speed in meters per second
+    int refreshRate = 20;
     protected void setup() {
         //step 1 -> choose staring point
         //step 2 -> chosse ending point
         System.out.println("Staring User");
         UserParams args = (UserParams) getArguments()[0];
 
-        position = args.startingPoint;
-        startingPont = args.startingPoint;
-        endingPoint = args.endingPoint;
+        position = (Vec2) args.startingPoint;
+        startingPont = (Vec2) args.startingPoint;
+        endingPoint = (Vec2) args.endingPoint;
+
+        //step 2.5 -> Set Movement direction
+        setMovementDir();
+        System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPont.x, startingPont.y,endingPoint.x,endingPoint.y,movementDir.x, movementDir.y));
 
 
         //step 3 -> start moving
-        this.addBehaviour(new Mover(this, 1000));
-
+        Behaviour movementLoop = new TickerBehaviour( this, refreshRate )
+        {
+            protected void onTick() {
+                Vec2 delta = Vec2.multiply(movementDir,  speed / refreshRate);
+                position.addMe(delta);
+                System.out.println(position.x + " " + position.y);
+            }
+        };
+        addBehaviour(movementLoop);
 
         //step 3.1 -> check progression
 
-        this.addBehaviour(new PositionChecker(this, 1000));
+       // this.addBehaviour(new PositionChecker(this, 1000));
 
         //step 4 -> start pinging location -> check PingStations
 
@@ -44,6 +66,11 @@ public class UserAgent extends Agent {
 
     }
 
+    private void setMovementDir(){
+        movementDir = Vec2.subtract(endingPoint,startingPont);
+        movementDir.normalize();
+    }
+    /*
     class PositionChecker extends TickerBehaviour {
 
         public PositionChecker(Agent a, long period) {
@@ -62,7 +89,7 @@ public class UserAgent extends Agent {
             }
 
         }
-    }
+    }*/
 
     class PingStations extends TickerBehaviour {
 
@@ -92,12 +119,16 @@ public class UserAgent extends Agent {
 
         @Override
         protected void onTick() {
+
+            /*
             double xdif = endingPoint.getX() - position.getX();
             double ydif = endingPoint.getX() - position.getY();
             xdif = xdif / 20;
             ydif = ydif / 20;
-            System.out.println("Moving from (" + position.getX() + "," + position.getY() + ") to (" + xdif + "," + ydif + ")");
+            System.out.println("Moving from ("+position.getX()+","+position.getY()+") to ("+xdif+","+ydif+")");
             position.setLocation(xdif, ydif);
+            */
+
 
         }
 

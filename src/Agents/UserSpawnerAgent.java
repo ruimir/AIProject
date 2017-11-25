@@ -7,6 +7,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
 import java.awt.geom.Point2D;
+import Agents.Utils.Vec2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +16,7 @@ import java.util.UUID;
 //test
 public class UserSpawnerAgent extends Agent {
 
-    Map<Integer, Point2D.Float> stations;
+    Map<Integer, Vec2> stations;
 
     @Override
     protected void setup() {
@@ -34,7 +35,7 @@ public class UserSpawnerAgent extends Agent {
                 try {
                     AgentController ag = this.getContainerController().createNewAgent("Station_" + i + "_" + j, "Agents.StationAgent", new Object[]{(Object) stationEx});
                     ag.start();
-                    stations.put((stations.size()), new Point2D.Float(x, y));
+                    stations.put((stations.size()), new Vec2(x, y));
                 } catch (StaleProxyException e) {
                     e.printStackTrace();
                 }
@@ -42,7 +43,7 @@ public class UserSpawnerAgent extends Agent {
         }
 
 
-        Behaviour loop = new TickerBehaviour(this, 10000) //creates user every 5 minutes
+        Behaviour loop = new TickerBehaviour(this, 1000) //creates user every 5 minutes
         {
             protected void onTick() {
                 System.out.println("Spawning new User:");
