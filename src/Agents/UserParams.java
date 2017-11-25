@@ -4,8 +4,9 @@ import java.awt.geom.Point2D;
 
 public class UserParams {
 
-    public Point2D.Float startingPoint,endingPoint;
-    public String startingAgent,endingAgent;
+    public Point2D.Float startingPoint, endingPoint;
+    public String startingAgent, endingAgent;
+
 
     public UserParams(Point2D.Float startingPoint, Point2D.Float endingPoint, String startingAgent, String endingAgent) {
         this.startingPoint = startingPoint;

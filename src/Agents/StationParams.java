@@ -14,5 +14,6 @@ public class StationParams {
         this.y = y;
         this.capacity = capacity;
         this.parkedBikes = parkedBikes;
+
     }
 }

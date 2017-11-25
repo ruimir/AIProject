@@ -1,35 +1,25 @@
 package Agents;
 
-import jade.core.AID;
+import Agents.Utils.Vec2;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
-
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
-import jade.tools.sniffer.Message;
-import sun.jvm.hotspot.runtime.Thread;
-
-import java.awt.geom.Point2D;
-import Agents.Utils.Vec2;
 
 import java.util.Random;
 
 public class UserAgent extends Agent {
     DFAgentDescription[] result;
+    float totalDistance;
+    float speed = 4f; // speed in meters per second
+    int refreshRate = 20;
     private String startingStation;
     private String endingStation;
-
     private Vec2 position, endingPoint, startingPont;
     private Vec2 movementDir;
-    float totalDistance;
 
-
-
-
-    float speed =  4f; // speed in meters per second
-    int refreshRate = 20;
     protected void setup() {
         //step 1 -> choose staring point
         //step 2 -> chosse ending point
@@ -39,28 +29,26 @@ public class UserAgent extends Agent {
         position = (Vec2) args.startingPoint;
         startingPont = (Vec2) args.startingPoint;
         setEndingPoint((Vec2) args.endingPoint);
-        startingStation=args.startingAgent;
-        endingStation=args.endingAgent;
+        startingStation = args.startingAgent;
+        endingStation = args.endingAgent;
 
         //step 2.5 -> Set Movement direction
         setMovementDir();
-        System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPont.x, startingPont.y,endingPoint.x,endingPoint.y,movementDir.x, movementDir.y));
+        System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPont.x, startingPont.y, endingPoint.x, endingPoint.y, movementDir.x, movementDir.y));
 
 
         //step 3 -> start moving
-        Behaviour movementLoop = new TickerBehaviour( this, refreshRate )
-        {
+        Behaviour movementLoop = new TickerBehaviour(this, refreshRate) {
             protected void onTick() {
-                Vec2 delta = Vec2.multiply(movementDir,  speed / refreshRate);
+                Vec2 delta = Vec2.multiply(movementDir, speed / refreshRate);
                 position.addMe(delta);
-
 
 
                 //step 3.1 -> check progression
                 float completion = Vec2.subtract(position, startingPont).getLenght() / totalDistance;
-               // System.out.println(completion);
-                if (completion > 0.75){
-                  //  System.out.println(completion + " || " + position.x + " " + position.y);
+                // System.out.println(completion);
+                if (completion > 0.75) {
+                    //  System.out.println(completion + " || " + position.x + " " + position.y);
                 }
 
 
@@ -69,8 +57,7 @@ public class UserAgent extends Agent {
         addBehaviour(movementLoop);
 
 
-
-       // this.addBehaviour(new PositionChecker(this, 1000));
+        // this.addBehaviour(new PositionChecker(this, 1000));
 
         //step 4 -> start pinging location -> check PingStations
 
@@ -81,14 +68,14 @@ public class UserAgent extends Agent {
 
     }
 
-    private void setMovementDir(){
-        movementDir = Vec2.subtract(endingPoint,startingPont);
+    private void setMovementDir() {
+        movementDir = Vec2.subtract(endingPoint, startingPont);
         movementDir.normalize();
     }
 
-    private void setEndingPoint(Vec2 ep){
+    private void setEndingPoint(Vec2 ep) {
         endingPoint = ep;
-        Vec2 delta = Vec2.subtract(ep,startingPont);
+        Vec2 delta = Vec2.subtract(ep, startingPont);
         totalDistance = delta.getLenght();
 
     }
