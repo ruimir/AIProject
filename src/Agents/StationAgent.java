@@ -93,7 +93,7 @@ public class StationAgent extends Agent {
     private class Receiver extends CyclicBehaviour {
 
         private double createOffer(double reduction) {
-            double rate = (double) parkedBikes / (double) capacity;
+            double rate = (double) parkedBikes / (double) capacity; //
             double inverse = 1 - rate;
             return inverse * reduction;
         }
@@ -116,7 +116,7 @@ public class StationAgent extends Agent {
                             myAgent.send(reply);
                         }
                     } else if (message.getContent().equals("drop")) {
-                        if (parkedBikes != capacity) {
+                        if (parkedBikes < capacity) {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.CONFIRM);
                             reply.setContent("drop");
@@ -130,12 +130,19 @@ public class StationAgent extends Agent {
                     }
 
                 }
+                float unit = UserSpawnerAgent.gridUnitDistance;
+                int nRange = 1;
+
                 if (message.getPerformative() == ACLMessage.INFORM) {
                     String[] split = message.getContent().split(";");
                     float userX = Float.parseFloat(split[0]);
                     float userY = Float.parseFloat(split[1]);
-                    if (userX < (x + 2) && userX > (x - 2) && userY < (y + 2) && userY > (y - 2)) {
+
+
+                    if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
+                            userY < (y + nRange * unit) && userY > (y - nRange * unit)) {
                         //Propor oferta
+                        System.out.println(myAgent.getName() + "is proposing.");
                         double offer = createOffer(0.7);
                         ACLMessage reply = message.createReply();
                         reply.setPerformative(ACLMessage.PROPOSE);
@@ -148,7 +155,8 @@ public class StationAgent extends Agent {
                     String[] split = message.getContent().split(";");
                     float userX = Float.parseFloat(split[0]);
                     float userY = Float.parseFloat(split[1]);
-                    if (userX < (x + 2) && userX > (x - 2) && userY < (y + 2) && userY > (y - 2)) {
+                    if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
+                            userY < (y + nRange * unit) && userY > (y - nRange * unit)) {
                         //Propor oferta
                         double offer = createOffer(0.9);
                         ACLMessage reply = message.createReply();

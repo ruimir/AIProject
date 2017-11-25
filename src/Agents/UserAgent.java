@@ -24,6 +24,7 @@ public class UserAgent extends Agent {
     private Vec2 movementDir;
 
     private boolean travelComplete = false;
+    boolean acceptedProposal = false;
 
     protected void setup() {
         result = new DFAgentDescription[0];
@@ -72,6 +73,8 @@ public class UserAgent extends Agent {
         };
         addBehaviour(movementLoop);
 
+        this.addBehaviour(new Receiver());
+
 
         // this.addBehaviour(new PositionChecker(this, 1000));
 
@@ -80,6 +83,7 @@ public class UserAgent extends Agent {
         //step 5 -> receive offers -> Check Receiver
 
         //step 6 -> adapt to offers
+
 
 
     }
@@ -118,9 +122,7 @@ public class UserAgent extends Agent {
         endingPoint = ep;
         Vec2 delta = Vec2.subtract(ep, startingPont);
         totalDistance = delta.getLenght();
-
     }
-
 
     class PingStations extends TickerBehaviour {
 
@@ -162,14 +164,21 @@ public class UserAgent extends Agent {
         @Override
         public void action() {
             ACLMessage message = myAgent.receive();
-            if (message != null) {
+            if (message != null ) {
                 if (message.getPerformative() == ACLMessage.PROPOSE) {
-                    float offer = Float.parseFloat(message.getContent());
-                    if (offer > 0.7) {
+                    //float offer = Float.parseFloat(message.getContent());
+                    float offer = Float.parseFloat(message.getContent().split(";")[0]);
+                    if (offer > 0.7 && !acceptedProposal) {
                         ACLMessage reply = message.createReply();
                         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                         myAgent.send(reply);
-                        //mudar posição final
+                        //mudar posição e estacao finais
+
+                        System.out.println("Aceitou");
+                        acceptedProposal = true;
+                        float newX = Float.parseFloat(message.getContent().split(";")[1]);
+                        float newY = Float.parseFloat(message.getContent().split(";")[2]);
+                        setEndingPoint(new Vec2(newX, newY));
 
                     } else if (offer < 0.4) {
                         ACLMessage reply = message.createReply();
@@ -177,10 +186,17 @@ public class UserAgent extends Agent {
                         myAgent.send(reply);
                     } else {
                         Random rand = new Random();
-                        if (rand.nextInt(101) > 50) {
+                        if (rand.nextInt(101) > 50 && !acceptedProposal) {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                             myAgent.send(reply);
+
+                            System.out.println("Aceitou");
+                            acceptedProposal = true;
+                            float newX = Float.parseFloat(message.getContent().split(";")[1]);
+                            float newY = Float.parseFloat(message.getContent().split(";")[2]);
+                            setEndingPoint(new Vec2(newX, newY));
+
                         } else {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.REJECT_PROPOSAL);

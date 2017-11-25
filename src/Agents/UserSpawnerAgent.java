@@ -17,15 +17,15 @@ import java.util.UUID;
 public class UserSpawnerAgent extends Agent {
 
     Map<Integer, StationParams> stations;
-
+    public static int stationRowsNo = 8;
+    public static int stationColumnsNo = 8;
+    public static float gridUnitDistance = 100f;
 
     @Override
     protected void setup() {
         super.setup();
         stations = new HashMap<>();
-        int stationRowsNo = 8;
-        int stationColumnsNo = 8;
-        float gridUnitDistance = 100f;
+
 
         for (int i = 0; i < stationRowsNo; i++) {
             for (int j = 0; j < stationColumnsNo; j++) {
