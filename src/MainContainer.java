@@ -10,18 +10,20 @@ public class MainContainer {
     Runtime rt;
     ContainerController container;
 
-    static int stationRowsNo = 8;
-    static int stationColumnsNo = 8;
-    static float gridUnitDistance = 100f;
+    //static int stationRowsNo = 8;
+    //static int stationColumnsNo = 8;
+    //static float gridUnitDistance = 100f;
 
     public static void main(String[] args) {
         MainContainer a = new MainContainer();
 
         a.initMainContainerInPlatform("localhost", "9888", "MainContainer");
-        //a.startAgentInPlatform("Station1", "Agents.StationAgent");
+
+        a.startAgentInPlatform("", "Agents.UserSpawnerAgent");
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
 
+        /*
         for(int i = 0; i < stationRowsNo; i++){
             for(int j = 0; j < stationColumnsNo; j++){
                 float x = stationColumnsNo * gridUnitDistance;
@@ -31,6 +33,7 @@ public class MainContainer {
                 a.startStationAgent("Station_" + i + "_" + j, "Agents.StationAgent", stationEx);
             }
         }
+
 
 
         /*

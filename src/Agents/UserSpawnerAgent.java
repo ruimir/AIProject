@@ -27,8 +27,8 @@ public class UserSpawnerAgent extends Agent {
 
         for (int i = 0; i < stationRowsNo; i++) {
             for (int j = 0; j < stationColumnsNo; j++) {
-                float x = stationColumnsNo * gridUnitDistance;
-                float y = stationRowsNo * gridUnitDistance;
+                float x = j * gridUnitDistance;
+                float y = i * gridUnitDistance;
 
                 StationParams stationEx = new StationParams(x, y, 30, 15);
                 try {
@@ -42,7 +42,7 @@ public class UserSpawnerAgent extends Agent {
         }
 
 
-        Behaviour loop = new TickerBehaviour(this, 60000) //creates user every 5 minutes
+        Behaviour loop = new TickerBehaviour(this, 10000) //creates user every 5 minutes
         {
             protected void onTick() {
                 System.out.println("Spawning new User:");
@@ -57,7 +57,7 @@ public class UserSpawnerAgent extends Agent {
                     UserParams up = new UserParams(stations.get(chosen1), stations.get(chosen2));
 
 
-                    AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.User", new Object[]{(Object) up});
+                    AgentController ag = myAgent.getContainerController().createNewAgent("UserAgent_" + UUID.randomUUID(), "Agents.UserAgent", new Object[]{(Object) up});
                     ag.start();
                 } catch (Exception e) {
 

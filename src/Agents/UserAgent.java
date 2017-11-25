@@ -94,6 +94,7 @@ public class UserAgent extends Agent {
             double ydif = endingPoint.getX() - position.getY();
             xdif = xdif / 20;
             ydif = ydif / 20;
+            System.out.println("Moving from ("+position.getX()+","+position.getY()+") to ("+xdif+","+ydif+")");
             position.setLocation(xdif, ydif);
 
         }
