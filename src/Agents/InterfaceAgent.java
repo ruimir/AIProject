@@ -17,7 +17,7 @@ public class InterfaceAgent extends Agent {
         System.out.println(this.getLocalName() + "a começar!");
 
         this.addBehaviour(new ReceiveBehaviour());
-        this.addBehaviour(new ReceiveBehaviour());
+        // this.addBehaviour(new ReceiveBehaviour());
         System.out.println("Bem vindo!");
         System.out.println("Sistema de Partilha de Bicicletas - Interface");
         System.out.println("Prima alguma tecla para continuar:");
