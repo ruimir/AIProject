@@ -91,7 +91,6 @@ public class StationAgent extends Agent {
             msg.addReceiver(receiver);
 
             send(msg);
-
         }
     }
 

@@ -49,7 +49,7 @@ public class UserAgent extends Agent {
         setMovementDir();
 
 
-        System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPoint.x, startingPoint.y, endingPoint.x, endingPoint.y, movementDir.x, movementDir.y));
+        //System.out.println(String.format("IP: %s, %s FP: %s, %s DIR: %s, %s", startingPoint.x, startingPoint.y, endingPoint.x, endingPoint.y, movementDir.x, movementDir.y));
 
         //step 2.75 -> notify agent it is lifting bike
         ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
