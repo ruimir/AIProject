@@ -7,6 +7,7 @@ import jade.lang.acl.ACLMessage;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ControllerAgent extends Agent {
 
@@ -17,7 +18,9 @@ public class ControllerAgent extends Agent {
     @Override
     protected void setup() {
         super.setup();
-        this.agentinfo = new HashMap<>();
+        System.out.println("Starting ControllerAgent");
+        this.agentinfo = new TreeMap<>();
+        this.addBehaviour(new Receiver());
     }
 
 
@@ -49,12 +52,14 @@ public class ControllerAgent extends Agent {
 
                 } else if (msg.getPerformative() == ACLMessage.INFORM) {
                     //quando recebe info de estação -> update info
+                    //System.out.println("Updating Metrics");
                     String[] split = msg.getContent().split(";");
                     float occupationRate = Float.parseFloat(split[0]);
                     int spaces = Integer.parseInt(split[1]);
-                    int offersAccepted = Integer.parseInt(split[2]);
-                    int offersRejected = Integer.parseInt(split[3]);
-                    agentinfo.put(msg.getSender().getLocalName(), new StationMetrics(occupationRate, spaces, offersAccepted, offersRejected));
+                    int parkedbikes = Integer.parseInt(split[2]);
+                    int offersAccepted = Integer.parseInt(split[3]);
+                    int offersRejected = Integer.parseInt(split[4]);
+                    agentinfo.put(msg.getSender().getLocalName(), new StationMetrics(occupationRate, spaces , parkedbikes, offersAccepted, offersRejected));
 
                 } else if (msg.getPerformative() == ACLMessage.SUBSCRIBE) {
                     //quando recebe pedidos -> devolver info
@@ -66,8 +71,7 @@ public class ControllerAgent extends Agent {
 
                     } else {
                         ACLMessage reply = msg.createReply();
-                        reply.setPerformative(ACLMessage.INFORM);
-                        reply.setContent(agentinfo.get(msg.getContent()).toString());
+                        reply.setPerformative(ACLMessage.FAILURE);
                         myAgent.send(reply);
                     }
 

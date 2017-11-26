@@ -18,8 +18,10 @@ public class MainContainer {
         MainContainer a = new MainContainer();
 
         a.initMainContainerInPlatform("localhost", "9888", "MainContainer");
-
+        a.startAgentInPlatform("ControllerAgent", "Agents.ControllerAgent");
         a.startAgentInPlatform("", "Agents.UserSpawnerAgent");
+
+
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
         //a.startAgentInPlatform("User1", "Agents.UserAgent");
 

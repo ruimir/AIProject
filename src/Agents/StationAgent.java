@@ -10,6 +10,9 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StationAgent extends Agent {
 
     //Station Position x and y on the ambient
@@ -19,6 +22,7 @@ public class StationAgent extends Agent {
     int parkedBikes; //howm many bikes are currently on station
     int offersAccepted; //how many offers has this station been accepted
     int offersRejected; //how many offers has this station been rejectes
+    List<String> bannedAgents; //agents that cannot be contacted
 
 
     @Override
@@ -33,11 +37,12 @@ public class StationAgent extends Agent {
         this.parkedBikes = myParams.parkedBikes;
         this.offersAccepted = 0;
         this.offersRejected = 0;
+        this.bannedAgents = new ArrayList<>();
 
         System.out.println(String.format("Station at (%s, %s) initialized with %s bikes of %s.", x, y, parkedBikes, capacity));
 
         registerInDF();
-        this.addBehaviour(new SendMetrics(this, 10000));
+        this.addBehaviour(new SendMetrics(this, 1000));
         this.addBehaviour(new Receiver());
     }
 
@@ -80,7 +85,7 @@ public class StationAgent extends Agent {
         protected void onTick() {
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             float occupationRate = (float) parkedBikes / (float) capacity;
-            msg.setContent("" + occupationRate + ";" + capacity + ";" + offersAccepted + ";" + offersRejected);
+            msg.setContent("" + occupationRate + ";" + capacity +";" + parkedBikes + ";" + offersAccepted + ";" + offersRejected);
             AID receiver = new AID();
             receiver.setLocalName("ControllerAgent");
             msg.addReceiver(receiver);
@@ -110,9 +115,11 @@ public class StationAgent extends Agent {
                             reply.setContent("lift");
                             parkedBikes--;
                             myAgent.send(reply);
+                            System.out.println(myAgent.getLocalName() + ": Bike Lifted");
                         } else {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.REFUSE);
+                            reply.setContent("lift");
                             myAgent.send(reply);
                         }
                     } else if (message.getContent().equals("drop")) {
@@ -122,9 +129,11 @@ public class StationAgent extends Agent {
                             reply.setContent("drop");
                             parkedBikes++;
                             myAgent.send(reply);
+                            System.out.println(myAgent.getLocalName() + ": Bike Dropped");
                         } else {
                             ACLMessage reply = message.createReply();
                             reply.setPerformative(ACLMessage.REFUSE);
+                            reply.setContent("drop");
                             myAgent.send(reply);
                         }
                     }
@@ -141,9 +150,9 @@ public class StationAgent extends Agent {
 
 
                     if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
-                            userY < (y + nRange * unit) && userY > (y - nRange * unit)) {
+                            userY < (y + nRange * unit) && userY > (y - nRange * unit) && !bannedAgents.contains(message.getSender().getName())) {
                         //Propor oferta
-                        System.out.println(myAgent.getName() + "is proposing.");
+                        //System.out.println(myAgent.getName() + "is proposing.");
                         double offer = createOffer(0.7);
                         ACLMessage reply = message.createReply();
                         reply.setPerformative(ACLMessage.PROPOSE);
@@ -152,27 +161,35 @@ public class StationAgent extends Agent {
                     }
 
 
-                }
-
-                else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
-
+                } else if (message.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                     String[] split = message.getContent().split(";");
                     offersRejected++;
                     float userX = Float.parseFloat(split[0]);
                     float userY = Float.parseFloat(split[1]);
-                    if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
-                            userY < (y + nRange * unit) && userY > (y - nRange * unit)) {
-                        //Propor oferta
-                        double offer = createOffer(0.9);
-                        ACLMessage reply = message.createReply();
-                        reply.setPerformative(ACLMessage.PROPOSE);
-                        reply.setContent(offer + ";" + x + ";" + y);
-                        myAgent.send(reply);
-                    } else if (message.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                    boolean ban = Boolean.parseBoolean(split[2]);
+                    if (ban) {
+                        bannedAgents.add(message.getSender().getName());
+                        //System.out.println(myAgent.getLocalName() + " :Station Has Been Banned.");
+                    }
 
-                        offersAccepted++;
+                    if (!bannedAgents.contains(message.getSender().getName())) {
+                        if (userX < (x + nRange * unit) && userX > (x - nRange * unit) &&
+                                userY < (y + nRange * unit) && userY > (y - nRange * unit)) {
+                            //Propor oferta
+                            double offer = createOffer(0.9);
+                            ACLMessage reply = message.createReply();
+                            reply.setPerformative(ACLMessage.PROPOSE);
+                            reply.setContent(offer + ";" + x + ";" + y);
+                            myAgent.send(reply);
+                        }
 
                     }
+                } else if (message.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+
+                    offersAccepted++;
+                    System.out.println(myAgent.getLocalName() + ": Proposta Aceite!");
+                    bannedAgents.add(message.getSender().getName());
+
                 }
 
             } else {

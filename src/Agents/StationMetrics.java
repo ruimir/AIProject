@@ -3,12 +3,15 @@ package Agents;
 public class StationMetrics {
     public float occupationRate;
     public int spaces;
+    public int parkedbikes;
     public int offersAccepted;
     public int offersRejected;
 
-    public StationMetrics(float occupationRate, int spaces, int offersAccepted, int offersRejected) {
+
+    public StationMetrics(float occupationRate, int spaces, int parkedbikes, int offersAccepted, int offersRejected) {
         this.occupationRate = occupationRate;
         this.spaces = spaces;
+        this.parkedbikes = parkedbikes;
         this.offersAccepted = offersAccepted;
         this.offersRejected = offersRejected;
     }
@@ -47,11 +50,12 @@ public class StationMetrics {
 
     @Override
     public String toString() {
-        return
-                "" + occupationRate +
-                        ";" + spaces +
-                        ";" + offersAccepted +
-                        ";" + offersRejected
+        return "Métricas:\n" +
+                "Taxa de Ocupação =" + occupationRate +
+                "\n Espaços Disponíveis=" + spaces +
+                "\n Espaços Ocupados=" + parkedbikes +
+                "\n Ofertas Aceites=" + offersAccepted +
+                "\n Ofertas Rejeitadas=" + offersRejected
                 ;
     }
 }

@@ -31,7 +31,11 @@ public class UserSpawnerAgent extends Agent {
                 float x = j * gridUnitDistance;
                 float y = i * gridUnitDistance;
 
-                StationParams stationEx = new StationParams(x, y, 30, 15);
+                Random rand = new Random();
+                int capacity=rand.nextInt(30);
+                int parked=rand.nextInt(capacity+1);
+
+                StationParams stationEx = new StationParams(x, y, capacity, parked);
                 try {
                     AgentController ag = this.getContainerController().createNewAgent("Station_" + i + "_" + j, "Agents.StationAgent", new Object[]{(Object) stationEx});
                     stationEx.name = ag.getName();
@@ -43,8 +47,15 @@ public class UserSpawnerAgent extends Agent {
             }
         }
 
+        try {
+            AgentController IA = this.getContainerController().createNewAgent("InterfaceAgent", "Agents.InterfaceAgent", null);
+            IA.start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
 
-        Behaviour loop = new TickerBehaviour(this, 1000) //creates user every 5 minutes
+
+        Behaviour loop = new TickerBehaviour(this, 500) //creates user every second
         {
             protected void onTick() {
                 SpawnUser(myAgent);
@@ -63,8 +74,8 @@ public class UserSpawnerAgent extends Agent {
             }
         };
 
-       // addBehaviour(loop);
-        addBehaviour(spaw1user);
+        addBehaviour(loop);
+        //addBehaviour(spaw1user);
         System.out.println("UserSpawnerAgent Agent Initialized.");
     }
 
